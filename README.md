@@ -1,6 +1,6 @@
 # Snowflake Terraform Provider Upgrade Tool
 
-A comprehensive toolkit to help you upgrade your existing Snowflake Terraform configurations from older provider versions to the latest version (v0.94+). This tool is specifically designed for teams who already have Terraform managing their Snowflake infrastructure and need to migrate to newer provider versions.
+A  toolkit to help you upgrade your existing Snowflake Terraform configurations from older provider versions to the latest version (v0.94+). This tool is specifically designed for teams who already have Terraform managing their Snowflake infrastructure and need to migrate to newer provider versions.
 
 ## Why This Tool?
 
@@ -17,6 +17,7 @@ If you're using provider versions older than v0.90.0, you'll need to migrate you
 4. **Validate** that your migration was successful
 
 ## Quick Start - Assess Your Current Setup
+<img width="957" height="740" alt="image" src="https://github.com/user-attachments/assets/f87d4f61-c30d-4c2f-b2ce-e90eb2de5a49" />
 
 ### Step 1: Run the Migration Checker
 
