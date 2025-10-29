@@ -41,13 +41,20 @@ This will scan your existing Terraform configuration and state files to identify
 
 Based on your current provider version, follow the appropriate upgrade path:
 
-| Current Version | Recommended Path | Complexity |
-|----------------|------------------|------------|
-| v0.70.x or older | v0.70 → v0.80 → v0.90 → v0.94 | High |
-| v0.80.x | v0.80 → v0.90 → v0.94 | Medium |
-| v0.90.x | v0.90 → v0.94 | Low |
+| Current Version | Recommended Path | Complexity | Notes |
+|----------------|------------------|------------|-------|
+| v0.70.x or older | v0.70 → v0.80 → v0.90 → v1.0 → v2.0+ | Very High | Multiple breaking changes |
+| v0.80.x | v0.80 → v0.90 → v1.0 → v2.0+ | High | Grant system overhaul |
+| v0.90.x | v0.90 → v1.0 → v2.0+ | Medium | Major version transitions |
+| v1.x (1.0-1.9) | v1.x → v2.0+ | Medium | v2.0 has breaking changes |
+| v2.0-2.2 | v2.0-2.2 → v2.3+ | Low | BCR compatibility fixes |
+| v2.3+ | Stay current | Low | Keep updating regularly |
 
-**Important**: Do not skip major versions. Upgrade incrementally.
+**Important**: 
+- Do not skip major versions (0.x → 1.x → 2.x)
+- Version 1.0+ introduced significant grant system changes
+- Version 2.0+ is the current major version
+- Version 2.3+ includes BCR bundle compatibility fixes
 
 ### Step 3: Follow the Upgrade Guide
 
@@ -259,13 +266,13 @@ Follow the detailed instructions in [UPGRADE_GUIDE.md](UPGRADE_GUIDE.md#step-by-
 
 ## Reference Configurations
 
-The following files provide reference examples of modern Terraform configurations using the latest provider version (v0.94+):
+The following files provide reference examples of modern Terraform configurations using the latest provider version (v2.3+):
 
 - `examples_main.tf` - Example resource definitions using current best practices
-- `examples_variables.tf` - Variable patterns for v0.94+
+- `examples_variables.tf` - Variable patterns for v2.3+
 - `examples_outputs.tf` - Useful outputs for Snowflake resources
 - `examples_terraform.tfvars` - Configuration example
-- `versions.tf` - Provider version constraints
+- `versions.tf` - Provider version constraints (shows v2.3+ recommended)
 
 These are provided as **reference only** to show you what your migrated code should look like. **Do not replace your existing configuration with these files.** Use them as a guide when updating your own Terraform code.
 

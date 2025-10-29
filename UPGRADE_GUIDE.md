@@ -62,17 +62,67 @@ The Snowflake Terraform provider has undergone significant changes to align with
 
 ## Version Compatibility
 
-| Provider Version | Terraform Version | Snowflake Compatibility | Status |
-|-----------------|-------------------|------------------------|---------|
-| v0.94.x | >= 1.5.0 | All current versions | Current |
-| v0.90.x | >= 1.4.0 | All current versions | Supported |
-| v0.80.x | >= 1.3.0 | All current versions | Deprecated |
-| v0.70.x | >= 1.2.0 | All current versions | Deprecated |
-| < v0.70.0 | >= 1.0.0 | All current versions | End of Life |
+| Provider Version | Terraform Version | Snowflake Compatibility | Status | Notes |
+|-----------------|-------------------|------------------------|---------|-------|
+| v2.3.x+ | >= 1.5.0 | All current versions | Current | BCR bundle fixes |
+| v2.0.x - v2.2.x | >= 1.5.0 | All current versions | Supported | Update to 2.3+ for BCR |
+| v1.0.x - v1.9.x | >= 1.4.0 | All current versions | Supported | Upgrade to 2.x |
+| v0.94.x | >= 1.5.0 | All current versions | Deprecated | Legacy 0.x series |
+| v0.90.x | >= 1.4.0 | All current versions | Deprecated | Legacy 0.x series |
+| v0.80.x | >= 1.3.0 | All current versions | Deprecated | Legacy 0.x series |
+| v0.70.x | >= 1.2.0 | All current versions | Deprecated | Legacy 0.x series |
+| < v0.70.0 | >= 1.0.0 | All current versions | End of Life | Not supported |
+
+**Key Version Milestones:**
+- **v2.3.0+**: BCR bundle compatibility fixes (especially for SHOW FUNCTIONS/PROCEDURES)
+- **v2.0.0**: Major version with breaking changes, new resource patterns
+- **v1.0.0**: Grant system overhaul, deprecation of legacy grant resources
+- **v0.90.0**: Introduction of `snowflake_grant_privileges_to_role`
 
 ## Breaking Changes by Version
 
-### v0.94.x (Current)
+### v2.3.x+ (Current)
+
+**BCR Bundle Compatibility**
+- Fixed parsing for SHOW FUNCTIONS/PROCEDURES with new argument format
+- Resolves issues with function and procedure resources being removed from state
+- Critical for BCR bundle compatibility
+
+**Improvements**
+- Better error messages
+- Enhanced state management
+
+### v2.0.x - v2.2.x
+
+**Major Version 2.0 Changes**
+- Significant refactoring of resource schemas
+- New resource patterns and naming conventions
+- Enhanced validation and error handling
+- Improved state management
+
+**Grant System Refinements**
+- Further improvements to `snowflake_grant_privileges_to_role`
+- Better handling of grant dependencies
+- Enhanced privilege validation
+
+### v1.0.x - v1.9.x
+
+**Major Grant System Overhaul (v1.0)**
+- Introduction of `snowflake_grant_privileges_to_role` (unified grant resource)
+- Deprecation of legacy grant resources:
+  - `snowflake_database_grant`
+  - `snowflake_schema_grant`
+  - `snowflake_warehouse_grant`
+  - `snowflake_table_grant`
+  - `snowflake_view_grant`
+- New grant ownership model
+
+**Resource Improvements**
+- More strict validation on resource names
+- Case sensitivity enforced
+- Better dependency handling
+
+### v0.94.x (Legacy)
 
 **Grant Resources Refactored**
 - `snowflake_database_grant` → Use specific grant resources
@@ -84,18 +134,13 @@ The Snowflake Terraform provider has undergone significant changes to align with
 - Database: `data_retention_time_in_days` range updated
 - Schema: `is_managed` behavior clarified
 
-### v0.90.x
+### v0.90.x (Legacy)
 
-**Major Grant System Overhaul**
-- Introduction of `snowflake_grant_privileges_to_role`
-- Deprecation of legacy grant resources
-- New grant ownership model
+**Early Grant System Changes**
+- Initial work on new grant patterns
+- Preparation for v1.0 grant overhaul
 
-**Resource Naming**
-- More strict validation on resource names
-- Case sensitivity enforced
-
-### v0.80.x
+### v0.80.x (Legacy)
 
 **Schema Changes**
 - `snowflake_user`: Password management changes
@@ -118,16 +163,43 @@ grep -E "(database_grant|schema_grant|warehouse_grant)" current_resources.txt
 
 Edit your `versions.tf` or `main.tf`:
 
+**If upgrading from 0.x to 1.x:**
 ```hcl
 terraform {
   required_providers {
     snowflake = {
       source  = "Snowflake-Labs/snowflake"
-      version = "~> 0.94"  # Update this incrementally
+      version = "~> 1.0"  # First upgrade to 1.x
     }
   }
 }
 ```
+
+**If upgrading from 1.x to 2.x:**
+```hcl
+terraform {
+  required_providers {
+    snowflake = {
+      source  = "Snowflake-Labs/snowflake"
+      version = "~> 2.0"  # Then upgrade to 2.x
+    }
+  }
+}
+```
+
+**Current recommended version:**
+```hcl
+terraform {
+  required_providers {
+    snowflake = {
+      source  = "Snowflake-Labs/snowflake"
+      version = "~> 2.3"  # Latest with BCR fixes
+    }
+  }
+}
+```
+
+**Important**: Always upgrade incrementally through major versions (0.x → 1.x → 2.x)
 
 ### Step 3: Initialize and Plan
 
