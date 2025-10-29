@@ -86,7 +86,15 @@ Practical before/after examples for:
 - Complete infrastructure migrations
 - Testing and validation procedures
 
-### 4. Reference Configurations
+### 4. BCR Bundle Guide (`BCR_BUNDLE_GUIDE.md`)
+Comprehensive guide for Snowflake Behavior Change Release (BCR) Bundles:
+- What BCR Bundles are and why they matter
+- Bundle-by-bundle breakdown (2025_03, 2025_04, 2025_05, 2025_06)
+- Specific impacts on Terraform resources
+- Migration steps for each breaking change
+- Testing procedures before enabling bundles
+
+### 5. Reference Configurations
 Modern Terraform configurations showing:
 - Current best practices (v0.94+)
 - Proper grant resource usage
@@ -140,12 +148,30 @@ warehouse_size = "X-SMALL"  # Changed from "XSMALL"
 
 **Solution**: Follow the incremental upgrade path in [UPGRADE_GUIDE.md](UPGRADE_GUIDE.md#step-by-step-upgrade-process)
 
+## Understanding BCR Bundles
+
+Snowflake releases **Behavior Change Release (BCR) Bundles** that contain breaking changes. These changes are eventually enabled by default and cannot be disabled. Our [BCR_BUNDLE_GUIDE.md](BCR_BUNDLE_GUIDE.md) helps you:
+
+- Understand what each bundle changes
+- Test bundles before they're enforced
+- Migrate your Terraform code to be compatible
+- Handle authentication policies, privileges, and resource changes
+
+**Key BCR Bundles:**
+- **2025_06**: Authentication policy changes (MFA methods deprecated)
+- **2025_05**: Key-pair auth changes, dependency enforcement
+- **2025_04**: MFA defaults, stage access requirements
+- **2025_03**: Privilege renames, Python package changes
+
+See [BCR_BUNDLE_GUIDE.md](BCR_BUNDLE_GUIDE.md) for detailed migration instructions.
+
 ## For Official Documentation
 
 This tool complements the official Snowflake documentation:
-- [Snowflake BCR Migration Guide](https://github.com/snowflakedb/terraform-provider-snowflake/blob/main/SNOWFLAKE_BCR_MIGRATION_GUIDE.md#bundle-2025_04) - Official Bundle 2025_04 migration guide
+- [Snowflake BCR Migration Guide](https://github.com/snowflakedb/terraform-provider-snowflake/blob/main/SNOWFLAKE_BCR_MIGRATION_GUIDE.md) - Official BCR migration guide
 - [Terraform Snowflake Provider Docs](https://registry.terraform.io/providers/Snowflake-Labs/snowflake/latest/docs) - Latest provider documentation
 - [Provider GitHub Repository](https://github.com/snowflakedb/terraform-provider-snowflake) - Issues and discussions
+- [Snowflake BCR Bundles](https://docs.snowflake.com/en/release-notes/behavior-changes) - Official BCR bundle documentation
 
 ## Step-by-Step Migration Process
 

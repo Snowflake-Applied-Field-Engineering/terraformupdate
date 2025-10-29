@@ -144,6 +144,47 @@ else
     echo -e "${GREEN}✓ No hardcoded passwords detected${NC}"
 fi
 
+# Check for BCR Bundle related issues
+echo -e "\n${BLUE}=== Checking for BCR Bundle Compatibility Issues ===${NC}"
+
+# Check for authentication_policy with mfa_authentication_methods (BCR 2025_06)
+if grep -r "resource.*snowflake_authentication_policy" *.tf 2>/dev/null | grep -v "^#" > /dev/null; then
+    if grep -r "mfa_authentication_methods" *.tf 2>/dev/null | grep -v "^#" > /dev/null; then
+        echo -e "${YELLOW}⚠ Found authentication_policy with mfa_authentication_methods${NC}"
+        echo -e "${YELLOW}  This field is deprecated in BCR Bundle 2025_06${NC}"
+        echo -e "${YELLOW}  See BCR_BUNDLE_GUIDE.md for migration steps${NC}"
+        ((warnings++))
+    fi
+fi
+
+# Check for CREATE DATA EXCHANGE LISTING privilege (BCR 2025_03)
+if grep -r "CREATE DATA EXCHANGE LISTING" *.tf 2>/dev/null | grep -v "^#" > /dev/null; then
+    echo -e "${YELLOW}⚠ Found 'CREATE DATA EXCHANGE LISTING' privilege${NC}"
+    echo -e "${YELLOW}  This was renamed to 'CREATE LISTING' in BCR Bundle 2025_03${NC}"
+    grep -n "CREATE DATA EXCHANGE LISTING" *.tf 2>/dev/null | grep -v "^#" | sed 's/^/  /'
+    ((warnings++))
+fi
+
+# Check for Python procedures/functions without explicit psutil (BCR 2025_03)
+if grep -r "resource.*snowflake_procedure_python\|resource.*snowflake_function_python" *.tf 2>/dev/null | grep -v "^#" > /dev/null; then
+    echo -e "${YELLOW}⚠ Found Python UDF/procedures${NC}"
+    echo -e "${YELLOW}  BCR Bundle 2025_03 removes implicit psutil injection${NC}"
+    echo -e "${YELLOW}  Ensure psutil is explicitly listed in packages if needed${NC}"
+    ((warnings++))
+fi
+
+# Check for external_table resources (BCR 2025_04)
+if grep -r "resource.*snowflake_external_table" *.tf 2>/dev/null | grep -v "^#" > /dev/null; then
+    echo -e "${YELLOW}⚠ Found external_table resources${NC}"
+    echo -e "${YELLOW}  BCR Bundle 2025_04 requires USAGE privilege on stages${NC}"
+    echo -e "${YELLOW}  Ensure your role has USAGE on referenced stages${NC}"
+    ((warnings++))
+fi
+
+if [ $warnings -eq 0 ]; then
+    echo -e "${GREEN}✓ No BCR Bundle compatibility issues detected${NC}"
+fi
+
 # Check for new grant resources
 echo -e "\n${BLUE}=== Checking for New Grant Resources ===${NC}"
 new_grants=$(grep -r "snowflake_grant_privileges_to_role" *.tf 2>/dev/null | grep -v "^#" | wc -l | tr -d ' ')
@@ -188,15 +229,30 @@ fi
 
 # Check for upgrade guide
 echo -e "\n${BLUE}=== Documentation ===${NC}"
+docs_found=0
 if [ -f "UPGRADE_GUIDE.md" ]; then
     echo -e "${GREEN}✓ UPGRADE_GUIDE.md found${NC}"
-else
-    echo -e "${YELLOW}⚠ UPGRADE_GUIDE.md not found in current directory${NC}"
+    ((docs_found++))
+fi
+if [ -f "BCR_BUNDLE_GUIDE.md" ]; then
+    echo -e "${GREEN}✓ BCR_BUNDLE_GUIDE.md found${NC}"
+    ((docs_found++))
+fi
+if [ -f "MIGRATION_EXAMPLES.md" ]; then
+    echo -e "${GREEN}✓ MIGRATION_EXAMPLES.md found${NC}"
+    ((docs_found++))
+fi
+
+if [ $docs_found -eq 0 ]; then
+    echo -e "${YELLOW}⚠ No migration guides found in current directory${NC}"
+    echo -e "${YELLOW}  Consider downloading from: https://github.com/Snowflake-Applied-Field-Engineering/terraformupdate${NC}"
 fi
 
 echo -e "\n${BLUE}For detailed migration instructions, see:${NC}"
-echo -e "  - Local: ./UPGRADE_GUIDE.md"
-echo -e "  - Official: https://github.com/snowflakedb/terraform-provider-snowflake/blob/main/SNOWFLAKE_BCR_MIGRATION_GUIDE.md"
+echo -e "  - Provider Version Upgrade: ./UPGRADE_GUIDE.md"
+echo -e "  - BCR Bundle Changes: ./BCR_BUNDLE_GUIDE.md"
+echo -e "  - Migration Examples: ./MIGRATION_EXAMPLES.md"
+echo -e "  - Official BCR Guide: https://github.com/snowflakedb/terraform-provider-snowflake/blob/main/SNOWFLAKE_BCR_MIGRATION_GUIDE.md"
 
 echo -e "\n${BLUE}========================================${NC}"
 echo -e "${GREEN}Migration check complete!${NC}"
