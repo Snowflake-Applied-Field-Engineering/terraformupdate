@@ -3,7 +3,7 @@
 A  toolkit to help you upgrade your existing Snowflake Terraform configurations from older provider versions to the latest version (v0.94+). This tool is specifically designed for teams who already have Terraform managing their Snowflake infrastructure and need to migrate to newer provider versions.
 
 ## Why This Tool?
-
+This is mostly a list of tools and scripts that the AFE team has put together helping customers thru upgrades. We publish this here as a way to share that knowledge. This isn't meant to replace any offical documenation, just some lessons we've learned along the way.
 The Snowflake Terraform provider has undergone significant breaking changes, especially with:
 - **Bundle 2025_04** - Major grant system overhaul
 - **v0.90.x+** - Deprecated legacy grant resources
